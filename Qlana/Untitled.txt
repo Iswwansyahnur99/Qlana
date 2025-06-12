@@ -1,14 +1,1 @@
-{
-  "name": "qlana-landing-page",
-  "version": "1.0.0",
-  "description": "Interactive landing page for Qlana",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "author": "Full-Stack Gemini",
-  "license": "ISC",
-  "dependencies": {
-    "express": "^4.19.2"
-  }
-}
+
