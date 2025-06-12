@@ -1,70 +1,90 @@
 // script.js
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. KURSOR KUSTOM ---
+    // --- 1. KURSOR KUSTOM (SUPER CEPAT) ---
     const cursor = document.querySelector('.cursor');
+    gsap.set(cursor, { xPercent: -50, yPercent: -50 });
+
     window.addEventListener('mousemove', e => {
         gsap.to(cursor, {
-            x: e.clientX - cursor.offsetWidth / 2,
-            y: e.clientY - cursor.offsetHeight / 2,
-            duration: 0.5,
-            ease: 'power3.out'
+            duration: 0.2, // Durasi lebih singkat untuk responsivitas
+            x: e.clientX,
+            y: e.clientY,
+            ease: 'power1.out'
         });
     });
 
-    // Efek hover pada elemen interaktif
-    document.querySelectorAll('a, .feature-card').forEach(el => {
+    // Efek hover
+    document.querySelectorAll('a, button, .feature-card').forEach(el => {
         el.addEventListener('mouseenter', () => {
-            gsap.to(cursor, { scale: 2, backgroundColor: 'var(--primary-color)', border: 'none' });
+            gsap.to(cursor, { scale: 1.5, backgroundColor: 'var(--primary-color)', opacity: 0.5 });
         });
         el.addEventListener('mouseleave', () => {
-            gsap.to(cursor, { scale: 1, backgroundColor: 'transparent', border: '2px solid var(--primary-color)' });
+            gsap.to(cursor, { scale: 1, backgroundColor: 'transparent', opacity: 1 });
         });
     });
+    
+    // --- 2. HEADER TRANSPARAN SAAT DI ATAS ---
+    const header = document.querySelector('header');
+    ScrollTrigger.create({
+        start: 'top top',
+        end: 99999,
+        onUpdate: self => {
+            self.direction === -1 ? header.classList.remove('scrolled') : header.classList.add('scrolled');
+        }
+    });
+    // Menghilangkan class 'scrolled' jika kembali ke paling atas
+     window.addEventListener('scroll', () => {
+        if (window.scrollY === 0) {
+            header.classList.remove('scrolled');
+        }
+    });
 
-    // --- 2. 3D SPLINE ELEMENT ---
-    const splineContainer = document.querySelector('.spline-container');
-    const splineApp = document.createElement('spline-viewer');
-    splineApp.setAttribute('url', 'https://prod.spline.design/hCv0f-aW40NI3bTx/scene.splinecode');
-    splineContainer.appendChild(splineApp);
 
     // --- 3. GSAP ANIMATIONS ---
     gsap.registerPlugin(ScrollTrigger);
-    
-    // Animasi Teks Hero
-    const heroTitle = new SplitType('.reveal-type', { types: 'words' });
-    const heroWords = heroTitle.words;
 
-    gsap.fromTo(heroWords, 
-        { y: 115 }, 
-        { y: 0, duration: 1.3, ease: 'power4.out', stagger: 0.05, delay: 1 }
-    );
+    // Animasi Parallax Hero Background
+    gsap.to('.parallax-bg', {
+        yPercent: 20,
+        ease: 'none',
+        scrollTrigger: {
+            trigger: '#hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: true
+        }
+    });
     
-    // Animasi Tombol & Paragraf Hero
-    gsap.fromTo('.cta-button, .hero-content p', 
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: 'power4.out', delay: 1.8 }
-    );
+    // Animasi Konten Hero
+    gsap.from('.hero-content > *', {
+        y: 50,
+        opacity: 0,
+        stagger: 0.2,
+        duration: 1,
+        ease: 'power3.out',
+        delay: 0.5
+    });
     
-    // Animasi Judul Section saat di-scroll
-    gsap.utils.toArray('.section-title').forEach(title => {
-        gsap.from(title, {
+    // Animasi Judul Section
+    gsap.utils.toArray('.journey-intro h2, .journey-intro p, #how-to-play h2, #contact h2').forEach(el => {
+        gsap.from(el, {
             y: 50,
             opacity: 0,
             duration: 1,
             scrollTrigger: {
-                trigger: title,
+                trigger: el,
                 start: 'top 85%',
                 toggleActions: 'play none none none'
             }
         });
     });
 
-    // Animasi Kartu Fitur (stagger)
+    // Animasi Kartu Fitur
     gsap.from('.feature-card', {
         y: 100,
         opacity: 0,
-        stagger: 0.2,
+        stagger: 0.15,
         duration: 0.8,
         ease: 'power3.out',
         scrollTrigger: {
@@ -73,34 +93,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Animasi Langkah 'Cara Kerja' (stagger)
-    gsap.utils.toArray('.step').forEach(step => {
-        gsap.fromTo(step, 
-            { opacity: 0, x: -100 },
-            {
-                opacity: 1,
-                x: 0,
-                duration: 1,
-                ease: 'power3.out',
-                scrollTrigger: {
-                    trigger: step,
-                    start: 'top 80%',
-                    toggleActions: 'play none none none'
-                }
-            }
-        );
+    // Animasi Cara Kerja
+    gsap.from('.step', {
+        y: 50,
+        opacity: 0,
+        stagger: 0.3,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+            trigger: '.steps-container',
+            start: 'top 75%'
+        }
     });
     
     // Animasi Kontak
-    gsap.from('.contact-wrapper > *', {
+     gsap.from('.contact-wrapper > p', {
         y: 50,
         opacity: 0,
         stagger: 0.2,
         duration: 1,
         scrollTrigger: {
-            trigger: '#contact',
+            trigger: '.contact-wrapper',
             start: 'top 70%',
         }
     });
-
 });
